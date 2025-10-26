@@ -1,0 +1,225 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Корзина</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: #f5f5f5;
+        }
+
+        nav {
+            background-color: #6c5ce7;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+            .nav-links a {
+                color: white;
+                text-decoration: none;
+                font-weight: 500;
+                transition: opacity 0.3s;
+            }
+
+                .nav-links a:hover {
+                    opacity: 0.8;
+                }
+
+        main {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .cart-title {
+            margin-bottom: 1.5rem;
+            color: #333;
+            text-align: center;
+        }
+
+        .cart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .cart-item {
+            width: 100%;
+            aspect-ratio: 1/1;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 1rem;
+            text-align: center;
+        }
+
+            .cart-item img {
+                width: 100%;
+                height: auto;
+                object-fit: cover;
+                border-radius: 8px;
+                max-height: 60%;
+            }
+
+            .cart-item button {
+                padding: 0.5rem 1rem;
+                background-color: #d63031;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+
+                .cart-item button:hover {
+                    background-color: #c0392b;
+                }
+
+        .empty-cart {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #555;
+            margin-top: 2rem;
+        }
+
+        footer {
+            background-color: #343a40;
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="main.html" class="logo">Магазин</a>
+            <div class="nav-links">
+                <a href="main.html">Главная</a>
+                <a href="basket.html">Корзина</a>
+                <a href="delivery.html">Доставка</a>
+                <a href="profile.html">Профиль</a>
+
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <h1 class="cart-title">Ваша корзина</h1>
+        <div class="cart-grid" id="cart-items"></div>
+        <p class="empty-cart" id="empty-cart" style="display:none;">Ваша корзина пуста</p>
+        <div style="text-align: center; margin-top: 2rem;">
+            <button id="checkout-btn" style="
+        padding: 1rem 2rem;
+        background: #6c5ce7;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        cursor: pointer;
+    ">
+                Оформить заказ
+            </button>
+        </div>
+    </main>
+
+
+    <script>
+        if (!sessionStorage.getItem("token")) window.location.href = "../auth.html";
+        document.addEventListener('DOMContentLoaded', () => {
+            const cartItemsContainer = document.getElementById('cart-items');
+            const emptyCartMessage = document.getElementById('empty-cart');
+
+            // Загружаем корзину из localStorage
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+            function renderCart() {
+                cartItemsContainer.innerHTML = '';
+                if (cart.length === 0) {
+                    emptyCartMessage.style.display = 'block';
+                    return;
+                } else {
+                    emptyCartMessage.style.display = 'none';
+                }
+
+                cart.forEach((item, index) => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'cart-item';
+                    itemDiv.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}">
+                    <h3>${item.name}</h3>
+                    <p>${item.price} руб.</p>
+                    <button data-index="${index}">Удалить</button>
+                  `;
+                    itemDiv.querySelector('button').addEventListener('click', (e) => {
+                        removeFromCart(e.target.dataset.index);
+                    });
+                    cartItemsContainer.appendChild(itemDiv);
+                });
+            }
+
+            function removeFromCart(index) {
+                cart.splice(index, 1);
+                localStorage.setItem('cart', JSON.stringify(cart));
+                renderCart();
+            }
+
+            renderCart();
+        });
+        // Обработчик кнопки оформления
+        document.getElementById('checkout-btn').addEventListener('click', () => {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+            if (cart.length === 0) {
+                alert('Корзина пуста!');
+                return;
+            }
+
+            // ✅ Сохраняем ВЕСЬ список товаров в корзину
+            localStorage.setItem('basket', JSON.stringify(cart));
+
+            // Переход на страницу оформления
+            window.location.href = 'createord2.html';
+        });
+    </script>
+    <footer>
+        <p>&copy; 2025 Магазин по аренде девайсов. Все права защищены.</p>
+    </footer>
+</body>
+</html>

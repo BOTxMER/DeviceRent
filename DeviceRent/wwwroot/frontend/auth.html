@@ -1,0 +1,244 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Авторизация</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --accent-color: #fd79a8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --error-color: #ff4757;
+            --success-color: #2ed573;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--dark-color);
+        }
+
+        .login-container {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-family: 'Pacifico', cursive;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+            .input-group label {
+                display: block;
+                margin-bottom: 8px;
+                font-weight: 500;
+                color: var(--dark-color);
+            }
+
+            .input-group input {
+                width: 100%;
+                padding: 12px 15px;
+                border: 2px solid #e0e0e0;
+                border-radius: 8px;
+                font-size: 16px;
+                transition: border-color 0.3s;
+                box-sizing: border-box;
+            }
+
+                .input-group input:focus {
+                    border-color: var(--primary-color);
+                    outline: none;
+                }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .login-btn, .register-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            flex: 1;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+            .login-btn:hover, .register-btn:hover {
+                background-color: #5649d1;
+            }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 25px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+            .notification.show {
+                opacity: 1;
+            }
+
+            .notification.error {
+                background-color: var(--error-color);
+            }
+
+            .notification.success {
+                background-color: var(--success-color);
+            }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 30px 20px;
+                margin: 20px;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Авторизация</h2>
+        <div class="input-group">
+            <label for="login">Логин</label>
+            <input type="text" id="login" placeholder="Введите логин">
+        </div>
+        <div class="input-group">
+            <label for="password">Пароль</label>
+            <input type="password" id="password" placeholder="Введите пароль">
+        </div>
+        <div class="btn-group">
+            <button class="login-btn" onclick="login()">Войти</button>
+            <button class="register-btn" onclick="register()">Зарегистрироваться</button>
+        </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script>
+        function showNotification(message, isSuccess) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${isSuccess ? 'success' : 'error'} show`;
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        async function login() {
+            await authRequest('login');
+        }
+
+        async function register() {
+            await authRequest('register');
+        }
+
+        async function authRequest(action) {
+            const login = document.getElementById("login").value.trim();
+            const password = document.getElementById("password").value.trim();
+
+            if (!login || !password) {
+                showNotification("Пожалуйста, заполните логин и пароль.", false);
+                return;
+            }
+            if (action === 'register') {
+                const minLength = 8;
+                const hasUpperCase = /[A-Z]/.test(password);
+                const hasCyrillic = /[А-Яа-яЁё]/.test(password);
+
+                if (password.length < minLength) {
+                    showNotification(`Пароль должен быть не менее ${minLength} символов.`, false);
+                    return;
+                }
+
+                if (!hasUpperCase) {
+                    showNotification("Пароль должен содержать хотя бы одну заглавную латинскую букву.", false);
+                    return;
+                }
+
+                if (hasCyrillic) {
+                    showNotification("Пароль не должен содержать русских букв.", false);
+                    return;
+                }
+            }
+            try {
+                const response = await fetch(`http://localhost:5207/api/auth/${action}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ login, password })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    const errorMessage = action === 'register' && response.status === 400
+                        ? "Аккаунт с таким логином уже существует"
+                        : errorData.message || 'Неверный логин или пароль';
+
+                    showNotification(`Ошибка: ${errorMessage}`, false);
+                    return;
+                }
+
+                if (action === 'register') {
+                    showNotification("Аккаунт успешно зарегистрирован!", true);
+                    return;
+                }
+
+                const data = await response.json();
+                const token = data.token;
+
+                sessionStorage.setItem("token", token);
+
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                const role = payload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+
+                window.location.href = role === "admin" ? "admin/ord.html" : "user/main.html";
+            } catch (error) {
+                showNotification("Ошибка соединения с сервером", false);
+                console.error("Ошибка:", error);
+            }
+        }
+    </script>
+</body>
+</html>

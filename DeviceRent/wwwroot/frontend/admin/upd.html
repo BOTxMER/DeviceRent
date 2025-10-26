@@ -1,0 +1,208 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Обновление заявки</title>
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --accent-color: #fd79a8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f6fa;
+            margin: 0;
+            padding: 0;
+            color: var(--dark-color);
+        }
+
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-links a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: var(--dark-color);
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+            .nav-links a:hover {
+                background-color: var(--secondary-color);
+                color: white;
+            }
+
+        .form-container {
+            max-width: 600px;
+            margin: 30px auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 8px;
+                font-weight: 500;
+            }
+
+            .form-group input,
+            .form-group select {
+                width: 100%;
+                padding: 12px 15px;
+                border: 2px solid #e0e0e0;
+                border-radius: 8px;
+                font-size: 16px;
+                transition: all 0.3s;
+                box-sizing: border-box;
+            }
+
+                .form-group input:focus,
+                .form-group select:focus {
+                    border-color: var(--primary-color);
+                    outline: none;
+                    box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+                }
+
+        .submit-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+            .submit-btn:hover {
+                background-color: #5649d1;
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3);
+            }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <h2>Система аренды устройств</h2>
+        <div class="nav-links">
+            <a href="createord.html">Создание заявки</a>
+            <a href="ord.html">Список заявок</a>
+            <a href="upd.html">Обновление заявки</a>
+            <a href="stati.html">Статистика</a>
+            <a href="review.html">Добавить отзыв</a>
+            <a href="profile2.html">Профиль</a>
+        </div>
+    </nav>
+
+    <div class="form-container">
+        <h1>Обновление заявки</h1>
+        <form id="updateForm">
+            <div class="form-group">
+                <label for="id">Номер заявки</label>
+                <input required type="number" name="id" id="id" placeholder="Введите номер заявки" />
+            </div>
+
+            <div class="form-group">
+                <label for="diller">Доставщик</label>
+                <input type="text" name="diller" id="diller" placeholder="Введите имя доставщика" />
+            </div>
+
+            <div class="form-group">
+                <label for="comment">Комментарий</label>
+                <input type="text" name="comment" id="comment" placeholder="Введите комментарий" />
+            </div>
+
+            <div class="form-group">
+                <label for="status">Статус</label>
+                <select name="status" id="status">
+                    <option value="">-- Не изменять --</option>
+                    <option>В ожидании доставки</option>
+                    <option>Доставляется</option>
+                    <option>Доставлено</option>
+                </select>
+            </div>
+
+            <button type="submit" class="submit-btn">Обновить заявку</button>
+        </form>
+    </div>
+
+    <script>
+        if (!sessionStorage.getItem("token")) {
+            window.location.href = "auth.html";
+        }
+
+        document.getElementById('updateForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const id = parseInt(document.getElementById('id').value);
+            const diller = document.getElementById('diller').value.trim();
+            const comment = document.getElementById('comment').value.trim();
+            const status = document.getElementById('status').value;
+
+            if (!id || id <= 0) {
+                alert("Введите корректный номер заявки.");
+                return;
+            }
+
+            // Формируем объект для отправки
+            const data = {
+                Id: id,
+                Status: status || "",
+                Diller: diller || "",
+                Comment: comment || ""
+            };
+
+            try {
+                const response = await fetch("http://localhost:5207/update", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    alert("✅ Заявка успешно обновлена!");
+                    this.reset();
+                } else if (response.status === 404) {
+                    alert("❌ Заявка с таким номером не найдена.");
+                } else {
+                    const text = await response.text();
+                    console.error("Ошибка сервера:", text);
+                    alert("❌ Ошибка обновления заявки.");
+                }
+            } catch (error) {
+                console.error("Сетевая ошибка:", error);
+                alert("❌ Ошибка подключения к серверу.");
+            }
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,249 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Главная страница</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: #f5f5f5;
+        }
+
+        nav {
+            background-color: #6c5ce7;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+            .nav-links a {
+                color: white;
+                text-decoration: none;
+                font-weight: 500;
+                transition: opacity 0.3s;
+            }
+
+                .nav-links a:hover {
+                    opacity: 0.8;
+                }
+
+        main {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .welcome-section {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .products-title {
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .product-card {
+            width: 100%;
+            aspect-ratio: 1/1; /* Квадрат! */
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 1rem;
+            text-align: center;
+        }
+
+            .product-card img {
+                width: 100%;
+                height: auto;
+                object-fit: cover;
+                border-radius: 8px;
+                max-height: 60%;
+            }
+
+            .product-card button {
+                padding: 0.5rem 1rem;
+                background-color: #6c5ce7;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+
+                .product-card button:hover {
+                    background-color: #5944d1;
+                }
+
+        footer {
+            background-color: #343a40;
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="main.html" class="logo">Магазин</a>
+            <div class="nav-links">
+                <a href="main.html">Главная</a>
+                <a href="basket.html">Корзина</a>
+                <a href="delivery.html">Доставка</a>
+                <a href="profile.html">Профиль</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section class="welcome-section">
+            <h1>Добро пожаловать в аренду девайсов!</h1>
+            <p>Лучшие товары по выгодным ценам</p>
+        </section>
+
+        <h2 class="products-title">Наши товары</h2>
+
+        <div class="products-grid">
+            <!--  Карточки товаров -->
+            <div class="product-card">
+                <img src="/pict/keyrox.jpg" alt="Keyrox TKL">
+                <h3>Red Square Keyrox TKL</h3>
+                <p>5500 руб.</p>
+                <button>Добавить в корзину</button>
+            </div>
+
+            <div class="product-card">
+                <img src="/pict/buyback.jpg" alt="Bayback">
+                <h3>Buyback</h3>
+                <p>2280 руб.</p>
+                <button>Добавить в корзину</button>
+            </div>
+
+            <div class="product-card">
+                <img src="/pict/razer.jpg" alt="razer">
+                <h3>Razer Baracuda X</h3>
+                <p>8000 руб.</p>
+                <button>Добавить в корзину</button>
+            </div>
+
+            <div class="product-card">
+                <img src="/pict/mouse.jpg" alt="ProGamerMouse">
+                <h3>Pro CyberSport Gamer Mouse v1000</h3>
+                <p>100000 руб.</p>
+                <button>Добавить в корзину</button>
+            </div>
+
+            <div class="product-card">
+                <img src="/pict/sandevistan.jpg" alt="Militech Sandevistan">
+                <h3>Militech "Sandevistan"</h3>
+                <p>бесплатно</p>
+                <button>Добавить в корзину</button>
+            </div>
+
+            <div class="product-card">
+                <img src="/pict/fifine.jpg" alt="FifineAM8">
+                <h3>Fifine AM8</h3>
+                <p>5500 руб.</p>
+                <button>Добавить в корзину</button>
+            </div>
+
+            <div class="product-card">
+                <img src="/pict/kolonka.jpg" alt="JBL PartyBox 100">
+                <h3>JBL PartyBox 100</h3>
+                <p>37000 руб.</p>
+                <button>Добавить в корзину</button>
+            </div>
+
+            <div class="product-card">
+                <img src="/pict/tank.jpg" alt="tank">
+                <h3>tank</h3>
+                <p>50000000 руб.</p>
+                <button>Добавить в корзину</button>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Магазин по аренде девайсов. Все права защищены.</p>
+    </footer>
+    <script>
+        if (!sessionStorage.getItem("token")) window.location.href = "../auth.html";
+        document.addEventListener('DOMContentLoaded', () => {
+            // Получаем сохраненный товар из sessionStorage
+            const selectedProduct = JSON.parse(sessionStorage.getItem('selectedProduct'));
+
+            if (selectedProduct) {
+                // Автозаполнение поля "Устройство"
+                document.getElementById('deviceModel').value = selectedProduct.name;
+
+                // Можно добавить другие данные, например:
+                // document.getElementById('hour').value = 1; // Стандартное время аренды
+            }
+        });
+        document.addEventListener('DOMContentLoaded', () => {
+            const buttons = document.querySelectorAll('.product-card button');
+
+            buttons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const card = button.closest('.product-card');
+                    const name = card.querySelector('h3').innerText;
+                    const price = card.querySelector('p').innerText.replace(' руб.', '').trim();
+                    const image = card.querySelector('img').src;
+
+                    // Получаем текущую корзину
+                    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+                    // Добавляем новый товар
+                    cart.push({ name, price, image });
+
+                    // Сохраняем обратно
+                    localStorage.setItem('cart', JSON.stringify(cart));
+
+                    alert(`${name} добавлен(а) в корзину!`);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

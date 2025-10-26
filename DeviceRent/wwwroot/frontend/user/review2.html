@@ -1,0 +1,350 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Добавление отзыва</title>
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --accent-color: #fd79a8;
+            --light-color: #f5f5f5;
+            --dark-color: #343a40;
+            --success-color: #00b894;
+            --error-color: #d63031;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: var(--light-color);
+            color: var(--dark-color);
+        }
+
+        nav {
+            background-color: var(--primary-color);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+            .nav-links a {
+                color: white;
+                text-decoration: none;
+                font-weight: 500;
+                transition: opacity 0.3s;
+            }
+
+                .nav-links a:hover {
+                    opacity: 0.8;
+                }
+
+        main {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .form-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 8px;
+                font-weight: 500;
+            }
+
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                width: 100%;
+                padding: 12px 15px;
+                border: 2px solid #e0e0e0;
+                border-radius: 8px;
+                font-size: 16px;
+                transition: all 0.3s;
+                box-sizing: border-box;
+            }
+
+            .form-group textarea {
+                min-height: 120px;
+                resize: vertical;
+            }
+
+                .form-group input:focus,
+                .form-group select:focus,
+                .form-group textarea:focus {
+                    border-color: var(--primary-color);
+                    outline: none;
+                    box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+                }
+
+        .submit-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+            .submit-btn:hover {
+                background-color: #5649d1;
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3);
+            }
+
+        .error {
+            color: var(--error-color);
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: auto;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="main.html" class="logo">Магазин</a>
+            <div class="nav-links">
+                <a href="main.html">Главная</a>
+                <a href="basket.html">Корзина</a>
+                <a href="delivery.html">Доставка</a>
+                <a href="profile.html">Профиль</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="form-container">
+            <h1>Добавление отзыва</h1>
+            <form id="reviewForm">
+                <div class="form-group">
+                    <label for="id">Номер заявки</label>
+                    <input required type="number" id="id" placeholder="Номер заявки будет заполнен автоматически" readonly />
+                    <span id="idError" class="error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="review">Текст отзыва</label>
+                    <textarea required id="review" placeholder="Напишите ваш отзыв"></textarea>
+                    <span id="reviewError" class="error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="rating">Оценка</label>
+                    <select required id="rating">
+                        <option value="">Выберите оценку</option>
+                        <option value="1">★ (1 звезда)</option>
+                        <option value="2">★★ (2 звезды)</option>
+                        <option value="3">★★★ (3 звезды)</option>
+                        <option value="4">★★★★ (4 звезды)</option>
+                        <option value="5">★★★★★ (5 звезд)</option>
+                    </select>
+                    <span id="ratingError" class="error"></span>
+                </div>
+
+                <button type="submit" class="submit-btn">Отправить отзыв</button>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Магазин по аренде девайсов. Все права защищены.</p>
+    </footer>
+    <script>
+        // Проверка авторизации при загрузке страницы
+            if (!sessionStorage.getItem("token")) {
+                window.location.href = "../auth.html";
+            throw new Error("Not authenticated");
+        }
+
+            // Функция валидации формы
+            function validateForm() {
+                // Очищаем предыдущие ошибки
+                document.querySelectorAll('.error').forEach(el => el.textContent = '');
+            let isValid = true;
+
+            // Проверка номера заявки
+            const orderId = document.getElementById('id').value;
+            if (!orderId || isNaN(orderId) || orderId < 1) {
+                document.getElementById('idError').textContent = 'Некорректный номер заявки';
+            isValid = false;
+            }
+
+            // Проверка текста отзыва
+            const reviewText = document.getElementById('review').value.trim();
+            if (!reviewText) {
+                document.getElementById('reviewError').textContent = 'Введите текст отзыва';
+            isValid = false;
+            }
+
+            // Проверка оценки
+            const ratingValue = document.getElementById('rating').value;
+            if (!ratingValue) {
+                document.getElementById('ratingError').textContent = 'Выберите оценку';
+            isValid = false;
+            }
+
+            return isValid;
+        }
+
+        // Загрузка данных при открытии страницы
+        document.addEventListener('DOMContentLoaded', async () => {
+            const token = sessionStorage.getItem("token");
+            if (!token) return;
+
+            try {
+                // Получаем текущего пользователя
+                const userResp = await fetch("http://localhost:5207/api/auth/current-user", {
+                headers: {
+                "Authorization": "Bearer " + token,
+            "Content-Type": "application/json"
+                    }
+                });
+
+            if (!userResp.ok) throw new Error("Не удалось получить пользователя");
+            const user = await userResp.json();
+
+            // Получаем все заказы
+            const ordersResp = await fetch("http://localhost:5207/orders", {
+                headers: {
+                "Authorization": "Bearer " + token
+                    }
+                });
+
+            if (!ordersResp.ok) throw new Error("Не удалось получить заказы");
+            const data = await ordersResp.json();
+
+            // Проверяем структуру ответа
+            if (!data.repo || !Array.isArray(data.repo)) {
+                    throw new Error("Некорректный формат данных заказов");
+                }
+
+                // Фильтруем заказы по текущему пользователю
+                const userOrders = data.repo.filter(o => o.client === user.username);
+
+                if (userOrders.length > 0) {
+                // Сортируем по дате (новые сначала)
+                userOrders.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+            // Берём последний заказ
+            const lastOrder = userOrders[0];
+            // Устанавливаем значение
+            document.getElementById('id').value = lastOrder.id;
+                } else {
+                console.log("У пользователя нет заказов");
+            document.getElementById('id').placeholder = "У вас нет активных заказов";
+                }
+            } catch (err) {
+                console.error("Ошибка при получении заказов:", err);
+            document.getElementById('id').placeholder = "Не удалось загрузить номер заявки";
+            }
+        });
+
+            // Обработчик отправки формы
+            document.getElementById('reviewForm').addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+            // Валидация формы
+            if (!validateForm()) {
+                return;
+            }
+
+            // Подготовка данных для отправки
+            const data = {
+                Id: parseInt(document.getElementById('id').value),
+            Review: document.getElementById('review').value.trim(),
+            Rating: parseInt(document.getElementById('rating').value)
+            };
+
+            try {
+                // Отправка данных на сервер
+                const response = await fetch("http://localhost:5207/add-review", {
+                method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            "Authorization": "Bearer " + sessionStorage.getItem("token")
+                    },
+            body: JSON.stringify(data)
+                });
+
+            if (response.ok) {
+                alert("Отзыв успешно добавлен!");
+            document.getElementById('reviewForm').reset();
+                } else {
+                    const errorData = await response.json();
+            alert(`Ошибка: ${errorData.message || response.statusText}`);
+                }
+            } catch (error) {
+                console.error("Ошибка при отправке отзыва:", error);
+            alert("Произошла ошибка при отправке отзыва");
+            }
+        });
+    </script>
+
+</body>
+</html>

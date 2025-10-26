@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JWT" Version="8.9.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.6">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\frontend\admin\createord.html" />
+    <None Include="wwwroot\frontend\admin\ord.html" />
+    <None Include="wwwroot\frontend\admin\profile2.html" />
+    <None Include="wwwroot\frontend\admin\review.html" />
+    <None Include="wwwroot\frontend\admin\stati.html" />
+    <None Include="wwwroot\frontend\admin\upd.html" />
+    <None Include="wwwroot\frontend\auth.html" />
+    <None Include="wwwroot\frontend\user\basket.html" />
+    <None Include="wwwroot\frontend\user\createord2.html" />
+    <None Include="wwwroot\frontend\user\delivery.html" />
+    <None Include="wwwroot\frontend\user\main.html" />
+    <None Include="wwwroot\frontend\user\profile.html" />
+    <None Include="wwwroot\frontend\user\review2.html" />
+    <None Include="wwwroot\pict\buyback.jpg" />
+    <None Include="wwwroot\pict\fifine.jpg" />
+    <None Include="wwwroot\pict\keyrox.jpg" />
+    <None Include="wwwroot\pict\kolonka.jpg" />
+    <None Include="wwwroot\pict\mouse.jpg" />
+    <None Include="wwwroot\pict\razer.jpg" />
+    <None Include="wwwroot\pict\sandevistan.jpg" />
+    <None Include="wwwroot\pict\tank.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\" />
+  </ItemGroup>
+
+</Project>

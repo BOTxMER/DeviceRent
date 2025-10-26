@@ -1,0 +1,294 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Профиль</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: #f5f5f5;
+        }
+
+        nav {
+            background-color: #6c5ce7;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+            .nav-links a {
+                color: white;
+                text-decoration: none;
+                font-weight: 500;
+                transition: opacity 0.3s;
+            }
+
+        main {
+            flex: 1;
+            padding: 2rem;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+            text-align: center;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .avatar-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            overflow: hidden;
+            background-color: #ddd;
+        }
+
+        .avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Скрываем label с input, т.к. кнопку загрузки сделаем отдельно */
+        .avatar-upload {
+            display: none;
+        }
+
+        #upload-avatar-btn {
+            background-color: #6c5ce7;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin: 10px auto 20px;
+            display: inline-block;
+        }
+
+            #upload-avatar-btn:hover {
+                background-color: #574bd9;
+            }
+
+        .orders-count {
+            font-size: 1.2rem;
+            color: #6c5ce7;
+            margin: 20px 0;
+        }
+
+        #logout-btn {
+            display: inline-block;
+            background-color: #6c5ce7;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin: 0 auto 20px;
+        }
+
+            #logout-btn:hover {
+                background-color: #574bd9;
+            }
+
+        footer {
+            background-color: #343a40;
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="main.html" class="logo">Магазин</a>
+            <div class="nav-links">
+                <a href="main.html">Главная</a>
+                <a href="basket.html">Корзина</a>
+                <a href="delivery.html">Доставка</a>
+                <a href="profile.html">Профиль</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="avatar-container">
+            <img id="avatar" class="avatar" src="" alt="Аватар" />
+            <label class="avatar-upload" title="Выбрать аватар">
+                <input type="file" id="avatar-input" accept="image/*" />
+            </label>
+        </div>
+
+        <!-- Отдельная кнопка для загрузки аватара -->
+        <button id="upload-avatar-btn">Загрузить аватарку</button>
+
+        <h1 id="welcome">Добро пожаловать</h1>
+
+        <div class="orders-count">
+            Количество заказов: <span id="orders-count">0</span>
+        </div>
+
+        <button id="logout-btn">Выйти</button>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Магазин по аренде девайсов. Все права защищены.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = sessionStorage.getItem('token');
+            if (!token) {
+                window.location.href = '../auth.html';
+                return;
+            }
+
+            const avatarImg = document.getElementById('avatar');
+            const avatarInput = document.getElementById('avatar-input');
+            const uploadBtn = document.getElementById('upload-avatar-btn');
+            const API_BASE = 'http://localhost:5207';
+
+            // Нормализуем URL аватара
+            function normalizeAvatarUrl(url) {
+                if (!url) return '';
+                if (url.startsWith('http://') || url.startsWith('https://')) return url;
+                if (url.startsWith('/')) return API_BASE + url;
+                return API_BASE + '/' + url;
+            }
+
+            // Загружаем аватар из localStorage
+            function loadAvatarFromLocal() {
+                const cachedAvatar = localStorage.getItem('avatarUrl');
+                if (cachedAvatar) {
+                    avatarImg.src = normalizeAvatarUrl(cachedAvatar);
+                }
+            }
+
+            // Запрос аватара с сервера
+            async function fetchAndDisplayAvatar() {
+                try {
+                    const res = await fetch(`${API_BASE}/api/avatar/me`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+
+                    if (!res.ok) {
+                        console.warn('Ошибка при получении аватара с сервера:', res.status);
+                        return;
+                    }
+
+                    const data = await res.json();
+                    if (data.avatarUrl) {
+                        const fullUrl = normalizeAvatarUrl(data.avatarUrl);
+                        avatarImg.src = fullUrl;
+                        localStorage.setItem('avatarUrl', data.avatarUrl);
+                    }
+                } catch (err) {
+                    console.warn('Ошибка загрузки аватара:', err);
+                }
+            }
+
+            // Открываем диалог выбора файла по нажатию на кнопку
+            uploadBtn.addEventListener('click', () => {
+                avatarInput.click();
+            });
+
+            // При выборе файла — отправляем на сервер
+            avatarInput.addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                if (!file.type.startsWith('image/')) {
+                    alert('Пожалуйста, выберите изображение');
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('avatar', file);
+
+                try {
+                    const response = await fetch(`${API_BASE}/api/avatar/upload`, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+
+                    if (!response.ok) {
+                        const errText = await response.text();
+                        throw new Error(errText);
+                    }
+
+                    const result = await response.json();
+                    if (result.avatarUrl) {
+                        avatarImg.src = normalizeAvatarUrl(result.avatarUrl);
+                        localStorage.setItem('avatarUrl', result.avatarUrl);
+                        alert('Аватар успешно загружен');
+                    } else {
+                        alert('Аватар не был загружен: пустой URL');
+                    }
+                } catch (error) {
+                    alert('Ошибка при загрузке аватара: ' + error.message);
+                }
+            });
+
+            // Загрузка количества заказов (пример, заглушка)
+            function loadOrdersCount() {
+                // Тут можно запрос к API с токеном для реальных данных
+                const randomOrdersCount = Math.floor(Math.random() * 10) + 1;
+                document.getElementById('orders-count').textContent = randomOrdersCount;
+            }
+
+            loadAvatarFromLocal();
+            fetchAndDisplayAvatar();
+            loadOrdersCount();
+
+            // Кнопка выхода
+            document.getElementById('logout-btn').addEventListener('click', () => {
+                sessionStorage.removeItem('token');
+                localStorage.removeItem('avatarUrl');
+                window.location.href = '../auth.html';
+            });
+        });
+    </script>
+
+</body>
+</html>

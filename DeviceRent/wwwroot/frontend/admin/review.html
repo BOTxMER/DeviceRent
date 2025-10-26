@@ -1,0 +1,203 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Добавление отзыва</title>
+    <style>
+        /* Можно взять тот же CSS из upd.html или подстроить под себя */
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --accent-color: #fd79a8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f6fa;
+            margin: 0;
+            padding: 0;
+            color: var(--dark-color);
+        }
+
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-links a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: var(--dark-color);
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+            .nav-links a:hover {
+                background-color: var(--secondary-color);
+                color: white;
+            }
+
+        .form-container {
+            max-width: 600px;
+            margin: 30px auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            padding: 30px;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 8px;
+                font-weight: 500;
+            }
+
+            .form-group input,
+            .form-group textarea,
+            .form-group select {
+                width: 100%;
+                padding: 12px 15px;
+                border: 2px solid #e0e0e0;
+                border-radius: 8px;
+                font-size: 16px;
+                box-sizing: border-box;
+                transition: all 0.3s;
+            }
+
+                .form-group input:focus,
+                .form-group textarea:focus,
+                .form-group select:focus {
+                    border-color: var(--primary-color);
+                    outline: none;
+                    box-shadow: 0 0 0 3px rgba(108,92,231,0.2);
+                }
+
+        .submit-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+            .submit-btn:hover {
+                background-color: #5649d1;
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(108,92,231,0.3);
+            }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <h2>Система аренды устройств</h2>
+        <div class="nav-links">
+            <a href="createord.html">Создание заявки</a>
+            <a href="ord.html">Список заявок</a>
+            <a href="upd.html">Обновление заявки</a>
+            <a href="stati.html">Статистика</a>
+            <a href="review.html">Добавить отзыв</a>
+            <a href="profile2.html">Профиль</a>
+        </div>
+    </nav>
+
+    <div class="form-container">
+        <h1>Добавление отзыва к заявке</h1>
+        <form id="reviewForm">
+            <div class="form-group">
+                <label for="id">Номер заявки</label>
+                <input required type="number" id="id" name="id" placeholder="Введите номер заявки" />
+            </div>
+            <div class="form-group">
+                <label for="review">Отзыв</label>
+                <textarea id="review" name="review" rows="4" placeholder="Напишите ваш отзыв"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="rating">Оценка</label>
+                <select id="rating" name="rating" required>
+                    <option value="">Выберите оценку</option>
+                    <option value="1">1 звезда</option>
+                    <option value="2">2 звезды</option>
+                    <option value="3">3 звезды</option>
+                    <option value="4">4 звезды</option>
+                    <option value="5">5 звезд</option>
+                </select>
+            </div>
+
+            <button type="submit" class="submit-btn">Отправить отзыв</button>
+        </form>
+    </div>
+
+    <script>
+        if (!sessionStorage.getItem("token")) {
+            window.location.href = "../auth.html";
+        }
+
+        document.getElementById('reviewForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const id = parseInt(document.getElementById('id').value);
+            const review = document.getElementById('review').value.trim();
+            const rating = parseInt(document.getElementById('rating').value);
+
+            if (!id || id <= 0) {
+                alert("Введите корректный номер заявки.");
+                return;
+            }
+            if (!review) {
+                alert("Пожалуйста, напишите отзыв.");
+                return;
+            }
+            if (!rating || rating < 1 || rating > 5) {
+                alert("Пожалуйста, выберите оценку от 1 до 5.");
+                return;
+            }
+
+            const data = { Id: id, Review: review, Rating: rating };
+
+            try {
+                const response = await fetch("http://localhost:5207/add-review", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    alert("✅ Отзыв успешно добавлен!");
+                    e.target.reset();
+                } else if (response.status === 404) {
+                    alert("❌ Заявка с таким номером не найдена.");
+                } else {
+                    const text = await response.text();
+                    console.error("Ошибка сервера:", text);
+                    alert("❌ Ошибка при добавлении отзыва.");
+                }
+            } catch (error) {
+                console.error("Сетевая ошибка:", error);
+                alert("❌ Ошибка подключения к серверу.");
+            }
+        });
+    </script>
+</body>
+</html>

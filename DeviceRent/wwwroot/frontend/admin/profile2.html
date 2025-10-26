@@ -1,0 +1,560 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Профиль</title>
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --light-color: #f5f6fa;
+            --dark-color: #343a40;
+        }
+
+        body {
+            margin: 0;
+            background-color: var(--light-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            background-color: white;
+            padding: 15px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-links a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: var(--dark-color);
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+
+            .nav-links a:hover {
+                background-color: var(--secondary-color);
+                color: white;
+            }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            flex-grow: 1;
+        }
+
+        .profile-info {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .avatar-container {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            background-color: #ddd;
+            overflow: hidden;
+        }
+
+        .avatar {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-upload {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+            .avatar-upload input {
+                display: none;
+            }
+
+        .profile-info h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .btn, .btn1 {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-bottom: 20px;
+        }
+
+            .btn:hover, .btn1:hover {
+                background-color: #574bd9;
+            }
+
+        #user-management {
+            display: none;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--light-color);
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .btn-small {
+            font-size: 14px;
+            padding: 6px 10px;
+            margin-right: 5px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+        }
+
+        .user-form {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: var(--light-color);
+            border-radius: 8px;
+            display: none;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        .form-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .password-field {
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <h2>Система аренды устройств</h2>
+        <div class="nav-links">
+            <a href="createord.html">Создание заявки</a>
+            <a href="ord.html">Список заявок</a>
+            <a href="upd.html">Обновление заявки</a>
+            <a href="stati.html">Статистика</a>
+            <a href="review.html">Добавить отзыв</a>
+            <a href="profile2.html">Профиль</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="profile-info">
+            <div class="avatar-container">
+                <img id="avatar" class="avatar" src="" alt="Аватар">
+                <label class="avatar-upload" title="Загрузить аватар">
+                    <input type="file" id="avatar-input" accept="image/*">
+                    <span>+</span>
+                </label>
+            </div>
+            <h1 id="welcome">Добро пожаловать</h1>
+        </div>
+
+        <button class="btn1" onclick="logout()">Выход</button>
+        <button class="btn" id="toggleUserMgmtBtn">Редактировать аккаунты пользователей</button>
+
+        <section id="user-management">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Логин</th>
+                        <th>Пароль</th>
+                        <th>Роль</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody id="users-list"></tbody>
+            </table>
+            <button class="btn btn-primary" id="add-user-btn" style="margin-top: 15px;">Добавить пользователя</button>
+
+            <div class="user-form" id="user-form">
+                <h2 id="form-title">Добавить пользователя</h2>
+                <input type="hidden" id="edit-user-id">
+                <div class="form-group">
+                    <label for="user-login">Логин</label>
+                    <input type="text" id="user-login" required />
+                </div>
+                <div class="form-group">
+                    <label for="user-password">Пароль</label>
+                    <input type="text" id="user-password" />
+                </div>
+                <div class="form-group">
+                    <label for="user-role">Роль</label>
+                    <select id="user-role">
+                        <option value="user">Пользователь</option>
+                        <option value="admin">Администратор</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-primary" id="save-user">Сохранить</button>
+                    <button type="button" class="btn btn-danger" id="cancel-edit">Отмена</button>
+                </div>
+            </div>
+        </section>
+    </div>
+    <script>
+        const token = sessionStorage.getItem('token');
+        if (!token) window.location.href = '../auth.html';
+
+        function logout() {
+            sessionStorage.removeItem('token');
+            localStorage.removeItem('avatarUrl');
+            window.location.href = '../auth.html';
+        }
+
+        // Отображение имени пользователя
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            document.getElementById('welcome').textContent = "Добро пожаловать, " + payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
+        } catch {
+            document.getElementById('welcome').textContent = "Добро пожаловать";
+        }
+
+        // Управление пользователями
+        const toggleBtn = document.getElementById('toggleUserMgmtBtn');
+        const userMgmtSection = document.getElementById('user-management');
+        const userForm = document.getElementById('user-form');
+        const addUserBtn = document.getElementById('add-user-btn');
+        const saveUserBtn = document.getElementById('save-user');
+        const cancelEditBtn = document.getElementById('cancel-edit');
+        const usersList = document.getElementById('users-list');
+
+        toggleBtn.addEventListener('click', () => {
+            if (userMgmtSection.style.display === 'block') {
+                userMgmtSection.style.display = 'none';
+                userForm.style.display = 'none';
+                addUserBtn.style.display = 'block';
+            } else {
+                userMgmtSection.style.display = 'block';
+                loadUsers();
+            }
+        });
+
+        async function loadUsers() {
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                if (payload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] !== 'admin') {
+                    usersList.innerHTML = `<tr><td colspan="5" style="color:red; text-align:center;">У вас нет прав для редактирования пользователей.</td></tr>`;
+                    return;
+                }
+            } catch {
+                usersList.innerHTML = `<tr><td colspan="5" style="color:red; text-align:center;">Ошибка токена.</td></tr>`;
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:5207/api/auth/users', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!response.ok) throw new Error('Ошибка загрузки');
+
+                const users = await response.json();
+                renderUsers(users);
+            } catch (err) {
+                usersList.innerHTML = `<tr><td colspan="5" style="color:red; text-align:center;">Ошибка загрузки пользователей.</td></tr>`;
+            }
+        }
+
+        function renderUsers(users) {
+            usersList.innerHTML = '';
+            users.forEach(user => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${user.id}</td>
+                    <td>${user.login}</td>
+                    <td><div class="password-field">${user.password}</div></td>
+                    <td>${user.role}</td>
+                    <td>
+                        <button class="btn btn-primary btn-small" data-id="${user.id}" data-action="edit">редактировать</button>
+                        <button class="btn btn-danger btn-small" data-id="${user.id}" data-action="delete">удалить</button>
+                    </td>
+                `;
+                usersList.appendChild(tr);
+            });
+
+            usersList.querySelectorAll('button').forEach(btn => {
+                btn.addEventListener('click', e => {
+                    const id = btn.dataset.id;
+                    const action = btn.dataset.action;
+                    if (action === 'edit') editUser(id);
+                    else if (action === 'delete') deleteUser(id);
+                });
+            });
+        }
+
+        addUserBtn.addEventListener('click', () => {
+            document.getElementById('edit-user-id').value = '';
+            document.getElementById('user-login').value = '';
+            document.getElementById('user-password').value = '';
+            document.getElementById('user-role').value = 'user';
+            document.getElementById('form-title').textContent = 'Добавить пользователя';
+            userForm.style.display = 'block';
+            addUserBtn.style.display = 'none';
+        });
+
+        cancelEditBtn.addEventListener('click', () => {
+            userForm.style.display = 'none';
+            addUserBtn.style.display = 'block';
+        });
+
+        saveUserBtn.addEventListener('click', async () => {
+            const userId = document.getElementById('edit-user-id').value;
+            const login = document.getElementById('user-login').value.trim();
+            const password = document.getElementById('user-password').value.trim();
+            const role = document.getElementById('user-role').value;
+
+            if (!login) return alert('Введите логин');
+            if (!userId && !password) return alert('Введите пароль');
+
+            try {
+                const url = userId
+                    ? `http://localhost:5207/api/auth/users/${userId}`
+                    : 'http://localhost:5207/api/auth/register-admin';
+                const method = userId ? 'PUT' : 'POST';
+
+                const response = await fetch(url, {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ login, password, role })
+                });
+
+                if (!response.ok) {
+                    const errText = await response.text();
+                    throw new Error(errText);
+                }
+
+                alert(userId ? 'Пользователь обновлен' : 'Пользователь добавлен');
+                userForm.style.display = 'none';
+                addUserBtn.style.display = 'block';
+                loadUsers();
+            } catch (error) {
+                alert(error.message || 'Ошибка сохранения');
+            }
+        });
+
+        async function editUser(userId) {
+            try {
+                const response = await fetch(`http://localhost:5207/api/auth/users/${userId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!response.ok) throw new Error('Ошибка загрузки данных');
+
+                const user = await response.json();
+                document.getElementById('edit-user-id').value = user.id;
+                document.getElementById('user-login').value = user.login;
+                document.getElementById('user-role').value = user.role;
+                document.getElementById('user-password').value = '';
+
+                document.getElementById('form-title').textContent = 'Редактировать пользователя';
+                userForm.style.display = 'block';
+                addUserBtn.style.display = 'none';
+            } catch {
+                alert('Не удалось загрузить данные');
+            }
+        }
+
+        async function deleteUser(userId) {
+            if (!confirm('Вы уверены, что хотите удалить этого пользователя?')) return;
+
+            try {
+                const response = await fetch(`http://localhost:5207/api/auth/users/${userId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Ошибка удаления');
+
+                alert('Пользователь удален');
+                loadUsers();
+            } catch {
+                alert('Не удалось удалить пользователя');
+            }
+        }
+
+        // ===== Аватар с LocalStorage + сервер + отдельная кнопка =====
+        (function () {
+            const avatarImg = document.getElementById('avatar');
+            const avatarInput = document.getElementById('avatar-input');
+            const token = sessionStorage.getItem('token');
+            const API_BASE = 'http://localhost:5207';
+
+            if (!token) {
+                alert('Пожалуйста, войдите в систему');
+                window.location.href = '../auth.html';
+                return;
+            }
+
+            // Подставить базовый URL к avatarUrl, если нужно
+            function normalizeAvatarUrl(url) {
+                if (!url) return '';
+                if (url.startsWith('http://') || url.startsWith('https://')) return url;
+                // Если относительный путь — добавляем базовый адрес
+                if (url.startsWith('/')) return API_BASE + url;
+                return API_BASE + '/' + url;
+            }
+
+            // Загрузка аватара из localStorage
+            function loadAvatarFromLocal() {
+                const cachedAvatar = localStorage.getItem('avatarUrl');
+                if (cachedAvatar) {
+                    avatarImg.src = normalizeAvatarUrl(cachedAvatar);
+                }
+            }
+
+            // Запрос текущего аватара с сервера
+            async function fetchAndDisplayAvatar() {
+                try {
+                    const res = await fetch(`${API_BASE}/api/avatar/me`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+
+                    if (!res.ok) {
+                        console.warn('Ошибка при получении аватара с сервера:', res.status);
+                        return;
+                    }
+
+                    const data = await res.json();
+                    if (data.avatarUrl) {
+                        const fullUrl = normalizeAvatarUrl(data.avatarUrl);
+                        avatarImg.src = fullUrl;
+                        localStorage.setItem('avatarUrl', data.avatarUrl);
+                    }
+                } catch (err) {
+                    console.warn('Ошибка загрузки аватара:', err);
+                }
+
+            }
+
+            // Загрузка нового аватара на сервер
+            avatarInput.addEventListener('change', async function (e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                if (!file.type.startsWith('image/')) {
+                    alert('Пожалуйста, выберите изображение');
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('avatar', file);
+
+                try {
+                    const response = await fetch(`${API_BASE}/api/avatar/upload`, {
+                        method: 'POST',
+                        body: formData,
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+
+                    if (!response.ok) {
+                        const errText = await response.text();
+                        console.error('Ошибка загрузки аватара:', errText);
+                        throw new Error(errText);
+                    }
+
+                    const result = await response.json();
+                    if (result.avatarUrl) {
+                        avatarImg.src = normalizeAvatarUrl(result.avatarUrl);
+                        localStorage.setItem('avatarUrl', result.avatarUrl);
+                        alert('Аватар успешно загружен');
+                    } else {
+                        alert('Аватар не был загружен: пустой URL');
+                    }
+
+                } catch (error) {
+                    console.error('Ошибка при загрузке аватара:', error);
+                    alert('Ошибка при загрузке аватара: ' + error.message);
+                }
+            });
+
+            // Кнопка "Загрузить аватар"
+            const uploadButton = document.createElement('button');
+            uploadButton.className = 'btn';
+            uploadButton.textContent = 'Загрузить аватар';
+            uploadButton.style.display = 'block';
+            uploadButton.style.margin = '10px auto';
+            document.querySelector('.profile-info').appendChild(uploadButton);
+
+            uploadButton.addEventListener('click', () => {
+                avatarInput.click();
+            });
+
+            // Инициализация
+            loadAvatarFromLocal();
+            fetchAndDisplayAvatar();
+        })();
+
+    </script>
+
+</body>
+</html>
